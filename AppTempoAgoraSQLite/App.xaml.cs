@@ -1,4 +1,5 @@
-﻿using AppTempoAgoraSQLite.Models;
+﻿using AppTempoAgoraSQLite.Helpers;
+using AppTempoAgoraSQLite.Models;
 using SQLite;
 
 
@@ -6,38 +7,31 @@ namespace AppTempoAgoraSQLite
 {
     public partial class App : Application
     {
-        public class SQliteDatabaseHelper
+        static SQliteDatabaseHelper _db;
+
+        public static SQliteDatabaseHelper Db
         {
-            readonly SQLiteAsyncConnection _conn;
-
-            public SQliteDatabaseHelper(string path)
+            get
             {
-                _conn = new SQLiteAsyncConnection(path);
-                _conn.CreateTableAsync<Tempo>().Wait();
+                if (_db == null)
+                {
+                    string path = Path.Combine(
+                        Environment.GetFolderPath(
+                            Environment.SpecialFolder.LocalApplicationData),
+                        "banco_sqlite_tempo.db3");
+
+                    _db = new SQliteDatabaseHelper(path);
+                }
+
+                return _db;
             }
+        }
 
-            public Task<int> Insert(Tempo p)
-            {
-                return _conn.InsertAsync(p);
-            }
+        public App()
+        {
+            InitializeComponent();
 
-
-            public Task<int> Delete(int id)
-            {
-                return _conn.Table<Tempo>().DeleteAsync(i => i.Id == id);
-            }
-
-            public Task<List<Tempo>> GetAll()
-            {
-                return _conn.Table<Tempo>().ToListAsync();
-            }
-
-            public Task<List<Tempo>> Search(string q)
-            {
-                string sql = "SELECT * FROM Tempo WHERE descricao LIKE '%" + q + "%'";
-
-                return _conn.QueryAsync<Tempo>(sql);
-            }
+            MainPage = new AppShell();
         }
     }
 }

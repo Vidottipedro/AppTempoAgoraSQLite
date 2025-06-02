@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SQLite;
 
 namespace AppTempoAgoraSQLite.Models
 {
-    internal class Tempo
+    public class Tempo
     {
-        internal int Id;
-
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public string Cidade { get; set; }
+        public DateTime DataConsulta { get; set; }
         public double? lon { get; set; }
         public double? lat { get; set; }
         public double? temp_min { get; set; }
